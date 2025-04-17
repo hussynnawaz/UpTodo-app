@@ -18,7 +18,8 @@ const WelcomeScreen = ({ navigation }) => {
         >
           <Text style={styles.loginText}>LOGIN</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.createAccountButton}>
+        <TouchableOpacity style={styles.createAccountButton}
+        onPress={() => navigation.navigate('RegisterScreen')}>
           <Text style={styles.createAccountText}>CREATE ACCOUNT</Text>
         </TouchableOpacity>
       </View>

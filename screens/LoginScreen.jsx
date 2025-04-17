@@ -3,8 +3,8 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity, Alert } from "reac
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { getFirestore, doc, getDoc } from "firebase/firestore";
 import { useDispatch } from "react-redux";
-import { setUser } from "../../redux/userSlice";
-import { auth } from "../../firebaseConfig"; // Make sure this is using the correct web-based SDK initialization
+import { setUser } from "../redux/userSlice";
+import { auth } from "../firebaseConfig"; // Make sure this is using the correct web-based SDK initialization
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -44,7 +44,7 @@ const LoginScreen = ({ navigation }) => {
       }));
 
       Alert.alert("Login Successful", "Welcome back!");
-      navigation.replace("Main"); // Navigate to Main screen after successful login
+      navigation.replace("HomeScreen"); // Navigate to Main screen after successful login
 
     } catch (error) {
       Alert.alert("Login failed", "Please check your email and password");
