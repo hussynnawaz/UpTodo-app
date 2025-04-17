@@ -7,6 +7,9 @@ export const TimerProvider = ({ children }) => {
   const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [studyPurpose, setStudyPurpose] = useState('');
+  const [endTime, setEndTime] = useState(null); // ✅ Add this
+  const [showEndModal, setShowEndModal] = useState(false); // ✅ Add this
+  const [modalMessage, setModalMessage] = useState(''); // ✅ Add this
   const timerRef = useRef(null);
 
   useEffect(() => {
@@ -20,6 +23,8 @@ export const TimerProvider = ({ children }) => {
           }
           clearInterval(timerRef.current);
           setIsRunning(false);
+          setModalMessage('Time is up! Great work!'); // ✅ Trigger modal message
+          setShowEndModal(true); // ✅ Show modal
           return 0;
         });
       }, 1000);
@@ -30,14 +35,13 @@ export const TimerProvider = ({ children }) => {
   return (
     <TimerContext.Provider
       value={{
-        isRunning,
-        setIsRunning,
-        minutes,
-        setMinutes,
-        seconds,
-        setSeconds,
-        studyPurpose,
-        setStudyPurpose,
+        isRunning, setIsRunning,
+        minutes, setMinutes,
+        seconds, setSeconds,
+        studyPurpose, setStudyPurpose,
+        endTime, setEndTime, // ✅ Provide to context
+        showEndModal, setShowEndModal, // ✅ Provide to context
+        modalMessage, setModalMessage, // ✅ Provide to context
       }}
     >
       {children}
