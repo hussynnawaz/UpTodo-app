@@ -10,6 +10,9 @@ import {
 } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
+import { db } from '../firebaseConfig'; // Make sure the path is correct
+import { collection, addDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const priorities = ['High', 'Medium', 'Low'];
 const categories = ['Work', 'Home', 'University', 'Personal', 'Shopping'];
@@ -22,29 +25,42 @@ const AddTaskScreen = ({ navigation, route }) => {
   const [priority, setPriority] = useState('');
   const [category, setCategory] = useState('');
 
-  const handleSaveTask = () => {
+  const handleSaveTask = async () => {
     if (!taskName || !priority || !category) {
       alert('Please fill in all required fields.');
       return;
     }
 
-    // Create a new task with a unique id
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      alert('User not authenticated.');
+      return;
+    }
+
     const newTask = {
-      id: new Date().getTime().toString(), // Ensure unique id for each task
       taskName,
       description,
-      date,
+      date: date.toISOString(),
       priority,
       category,
+      userId: user.uid,
+      createdAt: new Date().toISOString(),
     };
 
-    // Pass the new task to the parent screen (HomeScreen) through params
-    if (route.params?.onAddTask) {
-      route.params.onAddTask(newTask);
+    try {
+      await addDoc(collection(db, 'tasks'), newTask);
+      console.log('Task saved to Firestore:', newTask);
+
+      if (route.params?.onAddTask) {
+        route.params.onAddTask(newTask); // Optional local callback
+      }
+
       navigation.goBack();
-    } else {
-      console.warn('onAddTask function not provided');
-      navigation.goBack();
+    } catch (error) {
+      console.error('Error adding task to Firestore:', error);
+      alert('Failed to save task. Try again.');
     }
   };
 
@@ -220,9 +236,6 @@ const styles = StyleSheet.create({
     marginTop: 30,
     marginBottom: 40,
     opacity: 1,
-  },
-  saveButtonDisabled: {
-    opacity: 0.5,
   },
   saveButtonText: {
     color: '#fff',
