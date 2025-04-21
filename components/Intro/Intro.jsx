@@ -4,22 +4,21 @@ import { View, Image, StyleSheet, Text, TouchableOpacity } from 'react-native';
 const Intro = ({ navigation }) => {
   console.log("Intro component rendered");
   return (
-    <View style={styles.container}>
-      <Image 
-        source={require('../../assets/Group 173.png')} 
-        style={styles.image} 
-        resizeMode="contain" 
-      />
-      <TouchableOpacity 
-        style={styles.button} 
-        onPress={() => {
-          console.log("Button pressed");
-          navigation.navigate('Intro2');
-        }}
-      >
-        <Text style={styles.text}>Get Started</Text>
-      </TouchableOpacity>
-    </View>
+<View style={styles.container}>
+  <Image 
+    source={require('../../assets/main-logo.png')} 
+    style={styles.image} 
+    resizeMode="contain" 
+  />
+  <Text style={styles.title}>Study Buddy</Text>
+  <TouchableOpacity 
+    style={styles.button} 
+    onPress={() => navigation.navigate('Intro2')}
+  >
+    <Text style={styles.text}>Get Started</Text>
+  </TouchableOpacity>
+</View>
+
   );
 };
 
@@ -33,6 +32,7 @@ const styles = StyleSheet.create({
   },
   image: {
     width: 200,
+    height: 200,
   },
   button: {
     backgroundColor: '#8685E7',
@@ -48,6 +48,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     alignItems: 'center',
     fontSize: 16,
+  },
+  title: {
+    fontFamily: 'Future-PT-Bold', // Replace with actual font name if different
+    color: '#fff',
+    fontSize: 30,
+    fontWeight: 'bold',
+    marginTop: 10,
+    textAlign: 'center',
   },
 });
 

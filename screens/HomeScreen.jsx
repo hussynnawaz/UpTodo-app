@@ -9,6 +9,9 @@ import {
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useIsFocused } from '@react-navigation/native';
+import { db } from '../firebaseConfig';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const categoryColors = {
   University: '#5C9DFF',
@@ -20,6 +23,36 @@ const categoryColors = {
 const HomeScreen = ({ navigation, route }) => {
   const [tasks, setTasks] = useState([]);
   const isFocused = useIsFocused();
+
+  const fetchTasks = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      console.log('User not authenticated');
+      return;
+    }
+
+    const tasksRef = collection(db, 'tasks');
+    const q = query(tasksRef, where('userId', '==', user.uid)); // Fetch tasks for the current user
+
+    try {
+      const querySnapshot = await getDocs(q);
+      const tasksData = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setTasks(tasksData);
+    } catch (error) {
+      console.error('Error fetching tasks:', error);
+    }
+  };
+
+  useEffect(() => {
+    if (isFocused) {
+      fetchTasks();
+    }
+  }, [isFocused]);
 
   useEffect(() => {
     if (route.params?.newTask && isFocused) {

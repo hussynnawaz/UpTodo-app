@@ -8,20 +8,20 @@ import {
   Platform,
   ScrollView,
 } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import { Ionicons } from '@expo/vector-icons';
-import { db } from '../firebaseConfig'; // Make sure the path is correct
+import { db } from '../firebaseConfig';
 import { collection, addDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
 
 const priorities = ['High', 'Medium', 'Low'];
 const categories = ['Work', 'Home', 'University', 'Personal', 'Shopping'];
 
-const AddTaskScreen = ({ navigation, route }) => {
+const AddTaskScreen = ({ navigation }) => {
   const [taskName, setTaskName] = useState('');
   const [description, setDescription] = useState('');
   const [date, setDate] = useState(new Date());
-  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isDatePickerVisible, setDatePickerVisible] = useState(false);
   const [priority, setPriority] = useState('');
   const [category, setCategory] = useState('');
 
@@ -51,12 +51,6 @@ const AddTaskScreen = ({ navigation, route }) => {
 
     try {
       await addDoc(collection(db, 'tasks'), newTask);
-      console.log('Task saved to Firestore:', newTask);
-
-      if (route.params?.onAddTask) {
-        route.params.onAddTask(newTask); // Optional local callback
-      }
-
       navigation.goBack();
     } catch (error) {
       console.error('Error adding task to Firestore:', error);
@@ -64,11 +58,13 @@ const AddTaskScreen = ({ navigation, route }) => {
     }
   };
 
-  const onChangeDate = (event, selectedDate) => {
-    setShowDatePicker(Platform.OS === 'ios');
-    if (selectedDate) {
-      setDate(selectedDate);
-    }
+  const handleConfirmDate = (selectedDate) => {
+    setDate(selectedDate || date);
+    setDatePickerVisible(false);
+  };
+
+  const openDatePicker = () => {
+    setDatePickerVisible(true);
   };
 
   return (
@@ -95,31 +91,24 @@ const AddTaskScreen = ({ navigation, route }) => {
         numberOfLines={4}
       />
 
-      <Text style={styles.label}>Date & Time *</Text>
-      <TouchableOpacity
-        style={styles.input}
-        onPress={() => setShowDatePicker(true)}
-      >
+      <Text style={styles.label}>Date *</Text>
+      <TouchableOpacity style={styles.input} onPress={openDatePicker}>
         <Text style={styles.dateText}>
-          {date.toLocaleString('en-US', {
+          {date.toLocaleDateString('en-US', {
             weekday: 'short',
             month: 'short',
             day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
           })}
         </Text>
       </TouchableOpacity>
 
-      {showDatePicker && (
-        <DateTimePicker
-          value={date}
-          mode="datetime"
-          display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-          onChange={onChangeDate}
-          minimumDate={new Date()}
-        />
-      )}
+      <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        date={date}
+        onConfirm={handleConfirmDate}
+        onCancel={() => setDatePickerVisible(false)}
+      />
 
       <Text style={styles.label}>Priority *</Text>
       <View style={styles.pillContainer}>
@@ -129,9 +118,7 @@ const AddTaskScreen = ({ navigation, route }) => {
             style={[styles.pill, priority === item && styles.pillSelected]}
             onPress={() => setPriority(item)}
           >
-            <Text
-              style={[styles.pillText, priority === item && styles.pillTextSelected]}
-            >
+            <Text style={[styles.pillText, priority === item && styles.pillTextSelected]}>
               {item}
             </Text>
           </TouchableOpacity>
@@ -146,9 +133,7 @@ const AddTaskScreen = ({ navigation, route }) => {
             style={[styles.pill, category === item && styles.pillSelected]}
             onPress={() => setCategory(item)}
           >
-            <Text
-              style={[styles.pillText, category === item && styles.pillTextSelected]}
-            >
+            <Text style={[styles.pillText, category === item && styles.pillTextSelected]}>
               {item}
             </Text>
           </TouchableOpacity>
@@ -235,7 +220,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginTop: 30,
     marginBottom: 40,
-    opacity: 1,
   },
   saveButtonText: {
     color: '#fff',

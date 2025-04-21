@@ -6,12 +6,12 @@ import { getStorage } from "firebase/storage";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: FIREBASE_API_KEY,
-  authDomain: FIREBASE_AUTH_DOMAIN,
-  projectId: FIREBASE_PROJECT_ID,
-  storageBucket: FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
-  appId: FIREBASE_APP_ID,
+  apiKey: "AIzaSyCYJsjF3drHze1aZPd5csXKmE0eY4LC6K4",
+  authDomain: "uptodo-1539f.firebaseapp.com",
+  projectId: "uptodo-1539f",
+  storageBucket: "uptodo-1539f.firebasestorage.app",
+  messagingSenderId: "1005750852618",
+  appId: "1:1005750852618:web:72fa8a1b106c6274ecd3f3"
 };
 
 // Initialize Firebase
