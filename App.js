@@ -5,7 +5,6 @@ import { Provider } from 'react-redux';
 import store from './redux/store';
 import './firebase'; // ✅ Initialize Firebase once
 import { TimerProvider } from './screens/TimerProvider';
-
 import Intro from './components/Intro/Intro';
 import Intro2 from './components/Intro/Intro2';
 import Intro3 from './components/Intro/Intro3';
